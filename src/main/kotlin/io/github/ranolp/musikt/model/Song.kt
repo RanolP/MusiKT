@@ -1,0 +1,30 @@
+package io.github.ranolp.musikt.model
+
+import com.google.gson.JsonObject
+import io.github.ranolp.musikt.source.Author
+import io.github.ranolp.musikt.source.Source
+import io.github.ranolp.musikt.source.SourceData
+import io.github.ranolp.musikt.source.SourceGenerator
+import io.github.ranolp.musikt.util.javafx.readOnly
+
+data class Song<T : SourceData>(val data: JsonObject, val generator: SourceGenerator<T>) {
+    val source: Source<T> by lazy {
+        generator.generate(data)
+    }
+
+    val titleProperty by lazy {
+        readOnly("title") { title }
+    }
+
+    val title: String by lazy {
+        source.data.title
+    }
+
+    val authorsProperty by lazy {
+        readOnly<Set<Author>>("authors") { authors }
+    }
+
+    val authors: Set<Author> by lazy {
+        source.data.authors
+    }
+}
