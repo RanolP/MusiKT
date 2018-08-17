@@ -1,5 +1,5 @@
 # MusiKT
-> Listening music with a moonlight.
+> Listening music in the moonlight. :crescent_moon:
 
 가사 지원 ?
 
