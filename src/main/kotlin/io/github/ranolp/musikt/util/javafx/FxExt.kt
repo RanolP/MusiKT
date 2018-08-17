@@ -5,8 +5,10 @@ import javafx.collections.ObservableList
 import javafx.scene.Node
 import javafx.scene.layout.Region
 import javafx.scene.paint.Color
+import javafx.stage.Modality
 import javafx.stage.Screen
 import javafx.stage.Stage
+import javafx.stage.Window
 import tornadofx.*
 
 val Stage.screens: ObservableList<Screen>
@@ -47,12 +49,18 @@ fun Region.bindSize(parent: Region): Region {
     return this
 }
 
-fun customDialog(init: StageAwareFieldset.() -> Unit): CustomStage {
+fun customDialog(owner: Window? = null, init: StageAwareFieldset.() -> Unit): CustomStage {
     val stage = CustomStage()
     stage.apply(StageAwareFieldset().also(init))
-    stage.show()
     stage.set(top = WindowTitle(stage, minimizeButton = { hide() }, maximizeButton = { hide() }).root)
+    owner?.let {
+        stage.initOwner(owner)
+        stage.initModality(Modality.APPLICATION_MODAL)
+    }
+
+    stage.show()
     stage.minWidth = 200.0
     stage.minHeight = 100.0
+
     return stage
 }

@@ -16,8 +16,7 @@ import tornadofx.*
 
 class CustomStage(val shadow: Int = 16, val fitScene: Boolean = true) : Stage(StageStyle.TRANSPARENT) {
     private val shadowPane = BorderPane()
-    val real: Node
-        get() = shadowPane.center
+    val real = BorderPane()
     private val realScene = Scene(shadowPane)
 
     private val shadow_ = shadow.toDouble()
@@ -38,6 +37,17 @@ class CustomStage(val shadow: Int = 16, val fitScene: Boolean = true) : Stage(St
         }
         shadowPane.style = "-fx-background-color: transparent;"
         shadowPane.padding = insets
+        shadowPane.center = real
+        real.background = Color.WHITE.asBackground()
+        realWidth.let {
+            real.minWidthProperty().bind(it)
+            real.maxWidthProperty().bind(it)
+        }
+        realHeight.let {
+            real.minHeightProperty().bind(it)
+            real.maxHeightProperty().bind(it)
+        }
+
         realScene.fill = Color.TRANSPARENT
 
         scene = realScene
@@ -69,17 +79,22 @@ class CustomStage(val shadow: Int = 16, val fitScene: Boolean = true) : Stage(St
         }
     }
 
+    private val realWidth: DoubleBinding
+        get() = widthProperty().subtract(insets.left + insets.right)
+
+    private val realHeight: DoubleBinding
+        get() = heightProperty().subtract(insets.top + insets.bottom)
+
     private val centerWidth: DoubleBinding
         get() {
+            var result = realWidth
 
-            var result = widthProperty().subtract(insets.left + insets.right)
-
-            shadowPane.left?.let {
+            real.left?.let {
                 if (it is Region) {
                     result = result.subtract(it.widthProperty())
                 }
             }
-            shadowPane.right?.let {
+            real.right?.let {
                 if (it is Region) {
                     result = result.subtract(it.widthProperty())
                 }
@@ -90,15 +105,14 @@ class CustomStage(val shadow: Int = 16, val fitScene: Boolean = true) : Stage(St
 
     private val centerHeight: DoubleBinding
         get() {
+            var result = realHeight
 
-            var result = heightProperty().subtract(insets.top + insets.bottom)
-
-            shadowPane.top?.let {
+            real.top?.let {
                 if (it is Region) {
                     result = result.subtract(it.heightProperty())
                 }
             }
-            shadowPane.bottom?.let {
+            real.bottom?.let {
                 if (it is Region) {
                     result = result.subtract(it.heightProperty())
                 }
@@ -108,7 +122,7 @@ class CustomStage(val shadow: Int = 16, val fitScene: Boolean = true) : Stage(St
         }
 
     fun apply(root: Node): Scene {
-        shadowPane.center = root
+        real.center = root
         if (fitScene && root is Region) {
             centerWidth.let {
                 root.minWidthProperty().bind(it)
@@ -132,16 +146,16 @@ class CustomStage(val shadow: Int = 16, val fitScene: Boolean = true) : Stage(St
 
     fun set(top: Node? = null, right: Node? = null, bottom: Node? = null, left: Node? = null) {
         top?.let {
-            shadowPane.top = it
+            real.top = it
         }
         right?.let {
-            shadowPane.top = it
+            real.top = it
         }
         bottom?.let {
-            shadowPane.top = it
+            real.top = it
         }
         left?.let {
-            shadowPane.top = it
+            real.top = it
         }
     }
 }

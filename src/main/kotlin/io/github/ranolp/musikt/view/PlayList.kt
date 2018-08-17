@@ -97,7 +97,7 @@ class PlayList : View() {
                 size(64)
 
                 action {
-                    customDialog {
+                    customDialog(currentStage) {
                         combobox<SourceGenerator<*>>(
                             values = listOf(
                                 YoutubeSourceGenerator,
