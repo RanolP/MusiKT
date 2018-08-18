@@ -27,12 +27,26 @@ class Style : Stylesheet() {
 
 
     init {
+        FX.stylesheets.add("https://fonts.googleapis.com/css?family=Gothic+A1:100,200,300,400,500,600,700,800,900&subset=korean")
         star {
             textFill = papertic
+
+           fontFamily = "Gothic A1"
+        }
+
+        form {
+            backgroundColor += darkForest
         }
 
         realRoot {
             backgroundColor += darkForest
+        }
+
+        textField {
+            backgroundColor += darkForest.brighter()
+            borderColor += box(darkForest.darker())
+            borderWidth += box(1.px)
+            borderRadius += box(8.px)
         }
 
         button {
