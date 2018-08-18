@@ -55,14 +55,16 @@ fun customDialog(owner: Window? = null,
         title: String? = null,
         width: Number = 200,
         height: Number = 100,
-        init: Form.() -> Unit
+        init: Form.(Stage) -> Unit
 ): CustomStage {
     val stage = CustomStage()
     stage.scene.stylesheets.addAll(FX.stylesheets)
 
     stage.apply(Form().also {
         it.spacing = 16.0
-    }.also(init))
+    }.also{
+        it.init(stage)
+    })
     title?.let {
         stage.title = it
     }

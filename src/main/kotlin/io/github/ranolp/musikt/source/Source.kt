@@ -35,10 +35,6 @@ interface Source<Data : SourceData> {
     fun get(progress: Progress? = null): List<Result>
 
     fun get(progress: (Long, Long, Double) -> Unit): List<Result> {
-        return get(object : Progress {
-            override fun notify(current: Long, all: Long, percentage: Double) {
-                progress(current, all, percentage)
-            }
-        })
+        return get(Progress.fromLambda(progress))
     }
 }

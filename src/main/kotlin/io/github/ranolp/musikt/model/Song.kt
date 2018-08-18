@@ -5,6 +5,7 @@ import io.github.ranolp.musikt.source.Author
 import io.github.ranolp.musikt.source.Source
 import io.github.ranolp.musikt.source.SourceData
 import io.github.ranolp.musikt.source.SourceGenerator
+import io.github.ranolp.musikt.util.Progress
 import io.github.ranolp.musikt.util.javafx.readOnly
 
 data class Song<T : SourceData>(val data: JsonObject, val generator: SourceGenerator<T>) {
@@ -26,5 +27,19 @@ data class Song<T : SourceData>(val data: JsonObject, val generator: SourceGener
 
     val authors: Set<Author> by lazy {
         source.data.authors
+    }
+
+    fun validate(progress: Progress? = null): Boolean {
+        return try {
+            source.get(progress)
+            true
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    fun validate(progress: (Long, Long, Double) -> Unit): Boolean {
+        return validate(Progress.fromLambda(progress))
     }
 }

@@ -2,6 +2,9 @@ package io.github.ranolp.musikt.view
 
 import io.github.ranolp.musikt.model.Song
 import io.github.ranolp.musikt.source.SourceGenerator
+import io.github.ranolp.musikt.source.guessYoutubeId
+import io.github.ranolp.musikt.source.makeSoundcloudInput
+import io.github.ranolp.musikt.source.makeYoutubeInput
 import io.github.ranolp.musikt.source.soundcloud.SoundCloudSourceGenerator
 import io.github.ranolp.musikt.source.youtube.YoutubeSourceGenerator
 import io.github.ranolp.musikt.util.SystemResourceLookup
@@ -11,6 +14,7 @@ import io.github.ranolp.musikt.util.javafx.icon
 import io.github.ranolp.musikt.util.javafx.margin
 import io.github.ranolp.musikt.util.javafx.shaped
 import io.github.ranolp.musikt.util.javafx.size
+import javafx.application.Platform
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.geometry.Pos
@@ -25,7 +29,7 @@ import tornadofx.*
 class PlayList : View() {
     override val root = vbox {
         addClass(Style.realRoot)
-        listview<Song<*>> {
+        val songs = listview<Song<*>> {
             vboxConstraints {
                 vgrow = Priority.ALWAYS
             }
@@ -85,7 +89,7 @@ class PlayList : View() {
                 }
             }
 
-            items = listOf(
+            items = mutableListOf(
                 Song(SystemResourceLookup.gson("mockup/youtube/0.json"), YoutubeSourceGenerator),
                 Song(SystemResourceLookup.gson("mockup/youtube/1.json"), YoutubeSourceGenerator),
                 Song(SystemResourceLookup.gson("mockup/soundcloud/0.json"), SoundCloudSourceGenerator)
@@ -102,7 +106,7 @@ class PlayList : View() {
                 size(64)
 
                 action {
-                    customDialog(currentStage, "Add song", width = 400, height = 200) {
+                    customDialog(currentStage, "Add song", width = 400, height = 200) { stage ->
                         addClass(Style.realRoot)
 
                         val combobox = combobox<SourceGenerator<*>>(
@@ -133,6 +137,7 @@ class PlayList : View() {
                             }
                         }
 
+                        val progressBar = progressbar {}
 
                         button("Add") {
                             size(150, 30)
@@ -146,12 +151,36 @@ class PlayList : View() {
                             coloring(Color.hsb(0.0, 1.0, 0.85), shape::setFill)
 
                             action {
-                                when (combobox.value) {
+                                val generator = combobox.value
+                                val song = when (generator) {
                                     YoutubeSourceGenerator -> {
-                                        youtube.show()
+                                        Song(
+                                            makeYoutubeInput(
+                                                youtubeData.get().guessYoutubeId!!
+                                            ), generator
+                                        )
                                     }
                                     SoundCloudSourceGenerator -> {
-                                        soundcloud.show()
+                                        Song(
+                                            makeSoundcloudInput(
+                                                soundcloudUrl.get()
+                                            ), generator
+                                        )
+                                    }
+                                    else -> null
+                                }
+                                if (song != null) {
+                                    runAsync {
+                                        song.validate { _, _, percent ->
+                                            Platform.runLater {
+                                                progressBar.progress = percent / 100
+                                            }
+                                        }
+                                    }.success { isValid ->
+                                        if (isValid) {
+                                            songs.items.add(song)
+                                            stage.close()
+                                        }
                                     }
                                 }
                             }
