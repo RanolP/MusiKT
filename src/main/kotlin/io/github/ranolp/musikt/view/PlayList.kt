@@ -5,12 +5,17 @@ import io.github.ranolp.musikt.source.SourceGenerator
 import io.github.ranolp.musikt.source.soundcloud.SoundCloudSourceGenerator
 import io.github.ranolp.musikt.source.youtube.YoutubeSourceGenerator
 import io.github.ranolp.musikt.util.SystemResourceLookup
+import io.github.ranolp.musikt.util.javafx.coloring
 import io.github.ranolp.musikt.util.javafx.customDialog
 import io.github.ranolp.musikt.util.javafx.icon
 import io.github.ranolp.musikt.util.javafx.margin
+import io.github.ranolp.musikt.util.javafx.shaped
 import io.github.ranolp.musikt.util.javafx.size
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.StringProperty
 import javafx.geometry.Pos
 import javafx.scene.layout.Priority
+import javafx.scene.paint.Color
 import javafx.scene.text.FontPosture
 import javafx.scene.text.FontWeight
 import org.kordamp.ikonli.feather.Feather
@@ -97,17 +102,75 @@ class PlayList : View() {
                 size(64)
 
                 action {
-                    customDialog(currentStage) {
-                        combobox<SourceGenerator<*>>(
+                    customDialog(currentStage, "Add song", width = 400, height = 200) {
+                        addClass(Style.realRoot)
+
+                        val combobox = combobox<SourceGenerator<*>>(
                             values = listOf(
-                                YoutubeSourceGenerator,
-                                SoundCloudSourceGenerator
+                                YoutubeSourceGenerator, SoundCloudSourceGenerator
                             )
                         ) {
                             cellFormat {
                                 text = it.serviceName
                             }
                         }
+
+
+                        val youtubeData: StringProperty = SimpleStringProperty()
+
+                        val youtube = fieldset("Youtube Settings") {
+                            field("Url or Video Id") {
+                                youtubeData.bind(textfield().textProperty())
+                            }
+                        }
+
+
+                        val soundcloudUrl: StringProperty = SimpleStringProperty()
+
+                        val soundcloud = fieldset("SoundCloud Settings") {
+                            field("SoundCloud Song Url") {
+                                soundcloudUrl.bind(textfield().textProperty())
+                            }
+                        }
+
+
+                        button("Add") {
+                            size(150, 30)
+                            shaped()
+
+                            style {
+                                fontSize = 16.px
+                                backgroundColor += Color.TRANSPARENT
+                            }
+
+                            coloring(Color.hsb(0.0, 1.0, 0.85), shape::setFill)
+
+                            action {
+                                when (combobox.value) {
+                                    YoutubeSourceGenerator -> {
+                                        youtube.show()
+                                    }
+                                    SoundCloudSourceGenerator -> {
+                                        soundcloud.show()
+                                    }
+                                }
+                            }
+                        }
+
+                        combobox.valueProperty().onChange {
+                            youtube.hide()
+                            soundcloud.hide()
+                            when (it) {
+                                YoutubeSourceGenerator -> {
+                                    youtube.show()
+                                }
+                                SoundCloudSourceGenerator -> {
+                                    soundcloud.show()
+                                }
+                            }
+                        }
+
+                        combobox.selectionModel.select(0)
                     }
                 }
             }
