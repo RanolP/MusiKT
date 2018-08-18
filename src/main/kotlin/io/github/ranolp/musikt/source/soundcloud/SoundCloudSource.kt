@@ -32,12 +32,10 @@ class SoundCloudSource(url: String) : Source<SoundCloudData> {
         }
     }
 
-    private val track: Track
-
-    init {
+    private val track by lazy {
         val resolve = URL("http://api.soundcloud.com/resolve?client_id=$SOUNDCLOUD_KEY&url=$url")
         val resolvedUrl = resolve.readText().parseJson().asJsonObject["location"].asString
-        track = URL(resolvedUrl).readText().parseJson().convertTo()
+        URL(resolvedUrl).readText().parseJson().convertTo<Track>()
     }
 
     override val data: SoundCloudData by lazy {
