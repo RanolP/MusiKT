@@ -1,5 +1,6 @@
 package io.github.ranolp.musikt.view
 
+import io.github.ranolp.musikt.util.javafx.fixVisible
 import javafx.scene.layout.Priority
 import tornadofx.*
 
@@ -10,7 +11,8 @@ class DesktopMusicPlayer : View() {
         addChildIfPossible(player)
         addChildIfPossible(playList)
 
-        playList.managedProperty().bind(playList.visibleProperty())
+        playList.fixVisible()
+
         playList.hgrow = Priority.ALWAYS
 
         fun evaluate(width: Double, height: Double) {

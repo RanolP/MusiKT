@@ -3,8 +3,10 @@ package io.github.ranolp.musikt.util.javafx
 import io.github.ranolp.musikt.view.WindowTitle
 import javafx.collections.ObservableList
 import javafx.scene.Node
+import javafx.scene.control.Button
 import javafx.scene.layout.Region
 import javafx.scene.paint.Color
+import javafx.scene.shape.Ellipse
 import javafx.stage.Modality
 import javafx.stage.Screen
 import javafx.stage.Stage
@@ -49,9 +51,21 @@ fun Region.bindSize(parent: Region): Region {
     return this
 }
 
-fun customDialog(owner: Window? = null, init: StageAwareFieldset.() -> Unit): CustomStage {
+fun customDialog(owner: Window? = null,
+        title: String? = null,
+        width: Number = 200,
+        height: Number = 100,
+        init: Form.() -> Unit
+): CustomStage {
     val stage = CustomStage()
-    stage.apply(StageAwareFieldset().also(init))
+    stage.scene.stylesheets.addAll(FX.stylesheets)
+
+    stage.apply(Form().also {
+        it.spacing = 16.0
+    }.also(init))
+    title?.let {
+        stage.title = it
+    }
     stage.set(top = WindowTitle(stage, minimizeButton = { hide() }, maximizeButton = { hide() }).root)
     owner?.let {
         stage.initOwner(owner)
@@ -59,8 +73,36 @@ fun customDialog(owner: Window? = null, init: StageAwareFieldset.() -> Unit): Cu
     }
 
     stage.show()
-    stage.minWidth = 200.0
-    stage.minHeight = 100.0
+    stage.minWidth = width.toDouble()
+    stage.minHeight = height.toDouble()
 
     return stage
+}
+
+fun Node.fixVisible() {
+    managedProperty().bind(visibleProperty())
+}
+
+fun Button.circular(radius: Number) {
+    shape = circle(radius = radius)
+    size(radius)
+    shape.fill = Color.TRANSPARENT
+}
+
+fun Button.shaped(width: Number = this.width, height: Number = this.height): Button {
+    this.shape = Ellipse(width.toDouble(), height.toDouble())
+    return this
+}
+
+fun Button.size(radius: Number) {
+    size(radius, radius)
+}
+
+fun Button.size(width: Number, height: Number) {
+    minWidth = width.toDouble()
+    minHeight = height.toDouble()
+    prefWidth = width.toDouble()
+    prefHeight = height.toDouble()
+    maxWidth = width.toDouble()
+    maxHeight = height.toDouble()
 }

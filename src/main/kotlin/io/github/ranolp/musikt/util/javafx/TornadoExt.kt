@@ -28,21 +28,6 @@ fun Node.xray() {
     this.addClass(Style.xray)
 }
 
-fun Button.circular(radius: Number) {
-    shape = circle(radius = radius)
-    size(radius)
-    shape.fill = Color.TRANSPARENT
-}
-
-fun Button.size(radius: Number) {
-    minWidth = radius.toDouble()
-    minHeight = radius.toDouble()
-    prefWidth = radius.toDouble()
-    prefHeight = radius.toDouble()
-    maxWidth = radius.toDouble()
-    maxHeight = radius.toDouble()
-}
-
 fun Node.margin(unit: Dimension<Dimension.LinearUnits>) {
     style(append = true) {
         padding = box(unit, unit)

@@ -3,6 +3,7 @@ package io.github.ranolp.musikt.view
 import io.github.ranolp.musikt.controller.MusicPlayerController
 import io.github.ranolp.musikt.util.SystemResourceLookup
 import io.github.ranolp.musikt.util.javafx.circular
+import io.github.ranolp.musikt.util.javafx.fixVisible
 import io.github.ranolp.musikt.util.javafx.icon
 import io.github.ranolp.musikt.util.javafx.margin
 import io.github.ranolp.musikt.util.javafx.size
@@ -38,7 +39,7 @@ class MusicPlayer : View() {
 
             image = SystemResourceLookup.image("mockup/mockup.png")
 
-            managedProperty().bind(visibleProperty())
+            fixVisible()
 
             fitWidthProperty().bind(root.widthProperty().subtract(hMargin))
             fitHeightProperty().bind(root.heightProperty().subtract(vMargin))
