@@ -68,6 +68,8 @@ class WindowTitle(private val stage: CustomStage,
             backgroundColor += Color.BLACK
         }
 
+        var buttonCount = 0
+
         left = hbox(spacing = 12.0, alignment = Pos.CENTER_LEFT) {
             paddingLeft = 8.0
             if (closeConfiguration.show) {
@@ -80,6 +82,7 @@ class WindowTitle(private val stage: CustomStage,
                         closeConfiguration.action()
                     }
                 }
+                buttonCount++
             }
             if (minimizeConfiguration.show) {
                 button {
@@ -91,6 +94,7 @@ class WindowTitle(private val stage: CustomStage,
                         minimizeConfiguration.action()
                     }
                 }
+                buttonCount++
             }
             if (maximizeConfiguration.show) {
                 button {
@@ -102,12 +106,13 @@ class WindowTitle(private val stage: CustomStage,
                         maximizeConfiguration.action()
                     }
                 }
+                buttonCount++
             }
         }
 
         center = label {
             textProperty().bind(stage.titleProperty())
-            paddingLeft = 0 - 8 - 12 * 3 - 4 * 3
+            paddingLeft = 0 - 8 - 10 * buttonCount
             style {
                 fontWeight = FontWeight.LIGHT
                 fontSize = 16.px
