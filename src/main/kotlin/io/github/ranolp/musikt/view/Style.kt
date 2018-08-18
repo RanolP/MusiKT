@@ -12,7 +12,6 @@ class Style : Stylesheet() {
         val realRoot by cssclass()
         val bordered by cssclass()
         val xray by cssclass()
-        val transitioned by cssclass()
 
         val musiktTheme = Color.hsb(240.0, 0.45, 0.65)
         val musiktThemeLight = Color.hsb(240.0, 0.25, 0.95)
@@ -52,10 +51,6 @@ class Style : Stylesheet() {
             borderColor += box(papertic.darker())
             borderStyle += BorderStrokeStyle.SOLID
             borderWidth += box(1.px)
-        }
-
-        transitioned {
-            transitioned
         }
 
         xray {

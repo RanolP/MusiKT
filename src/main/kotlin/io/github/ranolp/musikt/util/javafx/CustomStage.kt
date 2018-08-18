@@ -123,16 +123,6 @@ class CustomStage(val shadow: Int = 16, val fitScene: Boolean = true) : Stage(St
 
     fun apply(root: Node): Scene {
         real.center = root
-        if (fitScene && root is Region) {
-            centerWidth.let {
-                root.minWidthProperty().bind(it)
-                root.maxWidthProperty().bind(it)
-            }
-            centerHeight.let {
-                root.minHeightProperty().bind(it)
-                root.maxHeightProperty().bind(it)
-            }
-        }
         return realScene
     }
 
