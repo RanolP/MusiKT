@@ -7,6 +7,8 @@ import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.control.ContentDisplay
 import javafx.scene.paint.Color
+import javafx.stage.Stage
+import javafx.stage.Window
 import org.kordamp.ikonli.Ikon
 import org.kordamp.ikonli.javafx.FontIcon
 import tornadofx.*
@@ -34,4 +36,21 @@ fun Node.margin(unit: Dimension<Dimension.LinearUnits>) {
         borderInsets += box(unit, unit)
         backgroundInsets += box(unit, unit)
     }
+}
+
+inline fun <reified T : Dialog> UIComponent.customDialogView(owner: Window? = null,
+        title: String? = null,
+        width: Number = 200,
+        height: Number = 100,
+        crossinline init: T.(Stage) -> Unit
+): CustomStage = customDialog(owner, title, width, height) {
+    val dialog = find(T::class, scope)
+    dialog.stage = it
+    it.apply(dialog.root)
+    dialog.init(it)
+}
+
+
+abstract class Dialog(title: String? = null, icon: Node? = null) : View(title, icon) {
+    lateinit var stage: CustomStage
 }

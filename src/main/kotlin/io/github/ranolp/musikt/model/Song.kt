@@ -7,11 +7,17 @@ import io.github.ranolp.musikt.source.SourceData
 import io.github.ranolp.musikt.source.SourceGenerator
 import io.github.ranolp.musikt.util.Progress
 import io.github.ranolp.musikt.util.javafx.readOnly
+import javafx.beans.property.SimpleBooleanProperty
+import tornadofx.*
 
 data class Song<T : SourceData>(val data: JsonObject, val generator: SourceGenerator<T>) {
     val source: Source<T> by lazy {
         generator.generate(data)
     }
+
+    val isPlayingProperty = SimpleBooleanProperty()
+
+    var isPlaying by isPlayingProperty
 
     val titleProperty by lazy {
         readOnly("title") { title }

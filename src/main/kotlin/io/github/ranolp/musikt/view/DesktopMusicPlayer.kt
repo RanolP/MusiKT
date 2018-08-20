@@ -16,7 +16,7 @@ class DesktopMusicPlayer : View() {
         playList.hgrow = Priority.ALWAYS
 
         fun evaluate(width: Double, height: Double) {
-            if (width <= 400 || height <= 400) {
+            if (width <= 300 || height <= 450) {
                 playList.isVisible = false
             } else {
                 val ratio = width / height
@@ -24,8 +24,8 @@ class DesktopMusicPlayer : View() {
             }
 
             val playerRatio = player.width / height
-            if (playList.isVisible && playerRatio <= 0.9) {
-                val newWidth = height * 0.8
+            if (playList.isVisible && playerRatio <= 0.8) {
+                val newWidth = height * 0.7
                 player.minWidth = newWidth
                 player.prefWidth = newWidth
                 player.maxWidth = newWidth

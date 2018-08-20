@@ -67,14 +67,26 @@ class MusicPlayer : View() {
                 }
                 alignment = Pos.CENTER
 
-                label("Ylvis") {
+                label("-") {
+                    controller.currentSongProperty.onChange {
+                        if (it == null) {
+                            return@onChange
+                        }
+                        text = it.title
+                    }
                     style {
                         fontWeight = FontWeight.BLACK
                         fontSize = 20.px
                     }
                 }
 
-                label("The fox") {
+                label("-") {
+                    controller.currentSongProperty.onChange {
+                        if (it == null) {
+                            return@onChange
+                        }
+                        text = it.authors.joinToString(" & ") { it.name }
+                    }
                     style {
                         fontWeight = FontWeight.LIGHT
                         fontSize = 12.px
@@ -139,6 +151,9 @@ class MusicPlayer : View() {
                     }
 
                     maxProperty().onChange {
+                        if (it <= 0) {
+                            return@onChange
+                        }
                         val hour = it.toInt() / 60 / 60
                         val minute = (it.toInt() / 60 % 60).toString().padStart(2, '0')
                         val second = (it.toInt() % 60).toString().padStart(2, '0')
@@ -150,8 +165,8 @@ class MusicPlayer : View() {
                         maxProperty.set(label)
                     }
 
-                    max = 3 * 60.0 + 25.0
-                    value = 60 + 30.0
+                    max = 0.0
+                    value = 0.0
 
                     style = """
                         -fx-control-inner-background: transparent;
@@ -203,13 +218,19 @@ class MusicPlayer : View() {
 
                 val btn = icon(Ionicons4IOS.PLAY, 24)
 
+                controller.isPlayingProperty.onChange {
+                    if (controller.isPlaying) {
+                        btn.iconCode = Ionicons4IOS.PAUSE
+                    } else {
+                        btn.iconCode = Ionicons4IOS.PLAY
+                    }
+                }
                 action {
                     if (controller.isPlaying) {
                         btn.iconCode = Ionicons4IOS.PLAY
                         controller.pauseSong()
-                    } else {
+                    } else if (controller.startSong()) {
                         btn.iconCode = Ionicons4IOS.PAUSE
-                        controller.startSong()
                     }
                 }
             }

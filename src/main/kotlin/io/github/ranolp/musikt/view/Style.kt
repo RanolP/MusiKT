@@ -21,17 +21,16 @@ class Style : Stylesheet() {
         val seliblue = Color.hsb(220.0, 0.45, 0.85)
 
         val iconColor by cssproperty<Paint>("-fx-icon-color")
-
-        val base by cssclass("base")
     }
 
 
     init {
         FX.stylesheets.add("https://fonts.googleapis.com/css?family=Gothic+A1:100,200,300,400,500,600,700,800,900&subset=korean")
+
         star {
             textFill = papertic
 
-           fontFamily = "Gothic A1"
+            fontFamily = "Gothic A1"
         }
 
         form {
@@ -44,9 +43,6 @@ class Style : Stylesheet() {
 
         textField {
             backgroundColor += darkForest.brighter()
-            borderColor += box(darkForest.darker())
-            borderWidth += box(1.px)
-            borderRadius += box(8.px)
         }
 
         button {
@@ -89,17 +85,36 @@ class Style : Stylesheet() {
 
         listView {
             backgroundColor += darkForest
+
+            listCell {
+                and(odd) {
+                    backgroundColor += darkForest
+                }
+                and(even) {
+                    backgroundColor += darkForest.brighter()
+                }
+                and(selected) {
+                    backgroundColor += seliblue
+                }
+            }
         }
 
-        listCell {
-            and(odd) {
+        comboBox {
+            listCell {
                 backgroundColor += darkForest
             }
-            and(even) {
-                backgroundColor += darkForest.brighter()
-            }
-            and(selected) {
-                backgroundColor += seliblue
+        }
+
+        comboBoxPopup {
+            listView {
+                listCell {
+                    and(hover) {
+                        backgroundColor += darkForest.brighter()
+                    }
+                    and(selected) {
+                        backgroundColor += seliblue
+                    }
+                }
             }
         }
     }

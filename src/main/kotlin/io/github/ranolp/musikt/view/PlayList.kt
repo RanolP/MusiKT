@@ -1,26 +1,19 @@
 package io.github.ranolp.musikt.view
 
+import io.github.ranolp.musikt.event.SongChangeEvent
 import io.github.ranolp.musikt.model.Song
-import io.github.ranolp.musikt.source.SourceGenerator
-import io.github.ranolp.musikt.source.guessYoutubeId
-import io.github.ranolp.musikt.source.makeSoundcloudInput
-import io.github.ranolp.musikt.source.makeYoutubeInput
 import io.github.ranolp.musikt.source.soundcloud.SoundCloudSourceGenerator
 import io.github.ranolp.musikt.source.youtube.YoutubeSourceGenerator
 import io.github.ranolp.musikt.util.SystemResourceLookup
-import io.github.ranolp.musikt.util.javafx.coloring
-import io.github.ranolp.musikt.util.javafx.customDialog
+import io.github.ranolp.musikt.util.javafx.customDialogView
 import io.github.ranolp.musikt.util.javafx.icon
 import io.github.ranolp.musikt.util.javafx.margin
-import io.github.ranolp.musikt.util.javafx.shaped
 import io.github.ranolp.musikt.util.javafx.size
 import javafx.application.Platform
-import javafx.beans.property.SimpleStringProperty
-import javafx.beans.property.StringProperty
 import javafx.geometry.Pos
+import javafx.scene.control.OverrunStyle
 import javafx.scene.layout.Priority
-import javafx.scene.paint.Color
-import javafx.scene.text.FontPosture
+import javafx.scene.layout.Region
 import javafx.scene.text.FontWeight
 import org.kordamp.ikonli.feather.Feather
 import org.kordamp.ikonli.ionicons4.Ionicons4IOS
@@ -46,19 +39,28 @@ class PlayList : View() {
                                     fontWeight = FontWeight.BOLD
                                     fontSize = 20.px
                                 }
+                                textOverrun = OverrunStyle.CLIP
                                 margin(2.px)
                             }
                             label(song.authors.joinToString(" & ") { it.name }) {
                                 style {
                                     fontWeight = FontWeight.LIGHT
-                                    fontStyle = FontPosture.ITALIC
                                     fontSize = 12.px
                                 }
+                                textOverrun = OverrunStyle.WORD_ELLIPSIS
                                 margin(2.px)
+                            }
+
+                            val parent = parent as? Region ?: return@vbox
+                            prefWidthProperty().bind(parent.widthProperty().subtract(64 * 3).subtract(4))
+                            parent.widthProperty().onChange {
+                                Platform.runLater {
+                                    parent.requestLayout()
+                                }
                             }
                         }
 
-                        hbox(spacing = 12.0) {
+                        hbox(spacing = 16.0) {
                             hboxConstraints {
                                 hGrow = Priority.ALWAYS
                                 alignment = Pos.CENTER_RIGHT
@@ -74,8 +76,20 @@ class PlayList : View() {
                             button {
                                 addClass(Style.bordered)
 
-                                icon(Ionicons4IOS.PLAY, 32)
+                                val play = icon(Ionicons4IOS.PLAY, 32)
                                 size(48)
+
+                                song.isPlayingProperty.onChange {
+                                    if (it) {
+                                        play.iconCode = Ionicons4IOS.PAUSE
+                                    } else {
+                                        play.iconCode = Ionicons4IOS.PLAY
+                                    }
+                                }
+
+                                action {
+                                    fire(SongChangeEvent(song))
+                                }
                             }
 
                             button {
@@ -106,100 +120,8 @@ class PlayList : View() {
                 size(64)
 
                 action {
-                    customDialog(currentStage, "Add song", width = 400, height = 200) { stage ->
-                        addClass(Style.realRoot)
-
-                        val combobox = combobox<SourceGenerator<*>>(
-                            values = listOf(
-                                YoutubeSourceGenerator, SoundCloudSourceGenerator
-                            )
-                        ) {
-                            cellFormat {
-                                text = it.serviceName
-                            }
-                        }
-
-
-                        val youtubeData: StringProperty = SimpleStringProperty()
-
-                        val youtube = fieldset("Youtube Settings") {
-                            field("Url or Video Id") {
-                                youtubeData.bind(textfield().textProperty())
-                            }
-                        }
-
-
-                        val soundcloudUrl: StringProperty = SimpleStringProperty()
-
-                        val soundcloud = fieldset("SoundCloud Settings") {
-                            field("SoundCloud Song Url") {
-                                soundcloudUrl.bind(textfield().textProperty())
-                            }
-                        }
-
-                        val progressBar = progressbar {}
-
-                        button("Add") {
-                            size(150, 30)
-                            shaped()
-
-                            style {
-                                fontSize = 16.px
-                                backgroundColor += Color.TRANSPARENT
-                            }
-
-                            coloring(Color.hsb(0.0, 1.0, 0.85), shape::setFill)
-
-                            action {
-                                val generator = combobox.value
-                                val song = when (generator) {
-                                    YoutubeSourceGenerator -> {
-                                        Song(
-                                            makeYoutubeInput(
-                                                youtubeData.get().guessYoutubeId!!
-                                            ), generator
-                                        )
-                                    }
-                                    SoundCloudSourceGenerator -> {
-                                        Song(
-                                            makeSoundcloudInput(
-                                                soundcloudUrl.get()
-                                            ), generator
-                                        )
-                                    }
-                                    else -> null
-                                }
-                                if (song != null) {
-                                    runAsync {
-                                        song.validate { _, _, percent ->
-                                            Platform.runLater {
-                                                progressBar.progress = percent / 100
-                                            }
-                                        }
-                                    }.success { isValid ->
-                                        if (isValid) {
-                                            songs.items.add(song)
-                                            stage.close()
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        combobox.valueProperty().onChange {
-                            youtube.hide()
-                            soundcloud.hide()
-                            when (it) {
-                                YoutubeSourceGenerator -> {
-                                    youtube.show()
-                                }
-                                SoundCloudSourceGenerator -> {
-                                    soundcloud.show()
-                                }
-                            }
-                        }
-
-                        combobox.selectionModel.select(0)
+                    customDialogView<AddSongDialog>(currentStage, "Add song", width = 400, height = 200) {
+                        this.songs = songs
                     }
                 }
             }
