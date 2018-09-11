@@ -1,19 +1,27 @@
 package io.github.ranolp.musikt.util
 
-interface Progress {
+class Progress(private val execute: (Double) -> Unit) {
+    private var completed = false
+
     companion object {
-        fun fromLambda(lambda: (Long, Long, Double) -> Unit): Progress {
-            return object : Progress {
-                override fun notify(current: Long, all: Long, percentage: Double) {
-                    lambda(current, all, percentage)
-                }
-            }
+        fun fromLambda(lambda: (Double) -> Unit): Progress {
+            return Progress(lambda)
         }
     }
 
-    fun notify(current: Long, all: Long, percentage: Double)
+    fun notify(percentage: Double) {
+        if (percentage >= 100.0) {
+            if (completed) {
+                return
+            }
+            completed = true
+            execute(100.0)
+        } else {
+            execute(percentage)
+        }
+    }
 
-    fun complete(all: Long) {
-        notify(all, all, 100.0)
+    fun complete() {
+        notify(100.0)
     }
 }

@@ -12,14 +12,6 @@ import tornadofx.*
 
 
 fun main(args: Array<String>) {
-    val myList = {
-        var myList = listOf(1)
-        myList += 2
-        myList += 3
-        myList += 4
-        myList += 5
-        myList
-    }()
     launch<MusiKTApp>(args)
 }
 

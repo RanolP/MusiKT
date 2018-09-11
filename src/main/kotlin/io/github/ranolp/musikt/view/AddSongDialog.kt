@@ -118,7 +118,7 @@ class AddSongDialog : Dialog() {
                     addButton.isDisable = true
 
                     runAsync {
-                        song.validate { _, _, percent ->
+                        song.validate { percent ->
                             Platform.runLater {
                                 progressBar.progress = percent / 100
                             }

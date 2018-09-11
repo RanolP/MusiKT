@@ -14,6 +14,7 @@
 - [ ] NicoVideo
 - [ ] Vimeo
 - [ ] Spotify
+- [ ] Genie Music
 
 ## F\*ck that bull s\*it
 

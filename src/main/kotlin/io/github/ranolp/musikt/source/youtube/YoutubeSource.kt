@@ -71,10 +71,18 @@ class YoutubeSource(val id: String) : Source<YoutubeData> {
                             Source.Type.VIDEO
                         }
                     }
+                    "wav" -> Source.Type.WAV
                     "webm" -> Source.Type.AUDIO
                     else -> Source.Type.UNKNOWN
                 }, renameTarget.toPath()
             )
+        }.let { list ->
+            val filtered = list.filter {
+                it.type.canListen && !it.path.parent.resolve("$id.wav").toFile().exists()
+            }
+            list + filtered.map {
+                makeWav(it.path.toFile())
+            }
         }
     }
 
@@ -91,6 +99,7 @@ class YoutubeSource(val id: String) : Source<YoutubeData> {
         val webUrl = URL("https://www.youtube.com/watch?v=$id")
         val videoInfo = parser.info(webUrl) as YouTubeInfo
         val vGet = VGet(videoInfo, path.toFile())
+
         vGet.download(stop) {
             when (videoInfo.state) {
                 VideoInfo.States.ERROR -> {
@@ -101,7 +110,7 @@ class YoutubeSource(val id: String) : Source<YoutubeData> {
                     val current = parts.map { it.count }.sum()
                     val max = parts.map { it.length }.sum()
                     if (!parts.isEmpty()) {
-                        progress?.notify(current, max, 100.0 * current / max)
+                        progress?.notify(100.0 * current / max)
                     }
                 }
                 else -> {

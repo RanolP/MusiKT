@@ -4,8 +4,8 @@ import io.github.ranolp.musikt.view.Style
 import javafx.event.EventTarget
 import javafx.geometry.Pos
 import javafx.scene.Node
-import javafx.scene.control.Button
 import javafx.scene.control.ContentDisplay
+import javafx.scene.control.Labeled
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.stage.Window
@@ -16,7 +16,7 @@ import tornadofx.*
 fun EventTarget.icon(iconCode: Ikon, iconSize: Int = 16, iconColor: Color = Color.BLACK, op: FontIcon.() -> Unit = {}
 ): FontIcon = FontIcon.of(iconCode, iconSize, iconColor).attachTo(this, op)
 
-fun Button.icon(iconCode: Ikon, iconSize: Int = 16, iconColor: Color = Color.BLACK, op: FontIcon.() -> Unit = {}
+fun Labeled.icon(iconCode: Ikon, iconSize: Int = 16, iconColor: Color = Color.BLACK, op: FontIcon.() -> Unit = {}
 ): FontIcon = FontIcon.of(iconCode, iconSize, iconColor).also {
     isPickOnBounds = true
     this.graphic = it
@@ -25,6 +25,8 @@ fun Button.icon(iconCode: Ikon, iconSize: Int = 16, iconColor: Color = Color.BLA
     contentDisplay = ContentDisplay.GRAPHIC_ONLY
     op(it)
 }
+
+fun EventTarget.circularProgressBar(op: CircularProgressBar.() -> Unit = {}) = CircularProgressBar().attachTo(this, op)
 
 fun Node.xray() {
     this.addClass(Style.xray)

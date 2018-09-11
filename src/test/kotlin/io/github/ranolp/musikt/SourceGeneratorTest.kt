@@ -18,7 +18,7 @@ class SourceGeneratorTest {
             val data = source.data
             println(source.data)
             var lastPercentage = 0
-            val download = source.get { _, _, percentage ->
+            val download = source.get { percentage ->
                 if (percentage == 100.0) {
                     println("${data.title} Donwload Complete!")
                 } else if (percentage.toInt() % 5 != lastPercentage % 5) {
@@ -67,6 +67,7 @@ class SourceGeneratorTest {
             makeSoundcloudInput(it)
         }.apply {
             success("https://soundcloud.com/wonderene/letter-songkorean-ver/")
+            success("https://soundcloud.com/n1c0de/knots-way-feat-romelonfull-version")
 
             failure("https://soundcloud.com/asdasfsafsafasfasdsad/asdsafsafsad")
             failure("")

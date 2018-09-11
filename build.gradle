@@ -13,12 +13,16 @@ mainClassName = 'io.github.ranolp.musikt.MusiKT'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 wrapper {
-    version = '4.8.1'
+    distributionType = 'all'
 }
 
 repositories {
     mavenCentral()
     jcenter()
+    maven {
+        name = 'jitpack'
+        url = 'https://jitpack.io'
+    }
 }
 
 dependencies {
@@ -27,6 +31,7 @@ dependencies {
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.11.3'
     implementation group: 'com.github.salomonbrys.kotson', name: 'kotson', version: '2.5.0'
     implementation group: 'com.github.axet', name: 'vget', version: '1.2.6'
+    implementation group: 'ws.schild', name: 'jave-all-deps', version: '2.4.2'
 
     implementation group: 'no.tornado', name: 'tornadofx', version: '1.7.16'
     implementation group: 'org.kordamp.ikonli', name: 'ikonli-javafx', version: '2.3.0'

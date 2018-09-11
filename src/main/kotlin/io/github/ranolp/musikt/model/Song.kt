@@ -8,6 +8,7 @@ import io.github.ranolp.musikt.source.SourceGenerator
 import io.github.ranolp.musikt.util.Progress
 import io.github.ranolp.musikt.util.javafx.readOnly
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleIntegerProperty
 import tornadofx.*
 
 data class Song<T : SourceData>(val data: JsonObject, val generator: SourceGenerator<T>) {
@@ -16,8 +17,14 @@ data class Song<T : SourceData>(val data: JsonObject, val generator: SourceGener
     }
 
     val isPlayingProperty = SimpleBooleanProperty()
-
     var isPlaying by isPlayingProperty
+
+    val isLoadingProperty = SimpleBooleanProperty()
+    var isLoading by isLoadingProperty
+
+    var cache: List<Source.Result>? = null
+
+    val loadingProgressProperty = SimpleIntegerProperty()
 
     val titleProperty by lazy {
         readOnly("title") { title }
@@ -45,7 +52,7 @@ data class Song<T : SourceData>(val data: JsonObject, val generator: SourceGener
         }
     }
 
-    fun validate(progress: (Long, Long, Double) -> Unit): Boolean {
+    fun validate(progress: (Double) -> Unit): Boolean {
         return validate(Progress.fromLambda(progress))
     }
 }

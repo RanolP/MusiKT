@@ -1,7 +1,6 @@
 package io.github.ranolp.musikt.view
 
 import io.github.ranolp.musikt.controller.MusicPlayerController
-import io.github.ranolp.musikt.util.SystemResourceLookup
 import io.github.ranolp.musikt.util.javafx.circular
 import io.github.ranolp.musikt.util.javafx.fixVisible
 import io.github.ranolp.musikt.util.javafx.icon
@@ -14,6 +13,7 @@ import javafx.scene.text.FontWeight
 import org.kordamp.ikonli.feather.Feather
 import org.kordamp.ikonli.ionicons4.Ionicons4IOS
 import tornadofx.*
+
 
 class MusicPlayer : View() {
     val controller: MusicPlayerController by inject()
@@ -37,7 +37,7 @@ class MusicPlayer : View() {
                 isVisible = it > vMargin + 64
             }
 
-            image = SystemResourceLookup.image("mockup/mockup.png")
+            // image = SystemResourceLookup.image("mockup/mockup.png")
 
             fixVisible()
 
@@ -149,6 +149,9 @@ class MusicPlayer : View() {
                         }
                         currentProperty.set(label)
                     }
+                    controller.currentProperty.onChange {
+                        valueProperty().set(it.toDouble())
+                    }
 
                     maxProperty().onChange {
                         if (it <= 0) {
@@ -164,9 +167,24 @@ class MusicPlayer : View() {
                         }
                         maxProperty.set(label)
                     }
+                    maxProperty().bind(controller.maxProperty)
 
-                    max = 0.0
-                    value = 0.0
+                    setOnMousePressed {
+                        isValueChanging = true
+                        value = it.x / width * max
+                    }
+                    setOnMouseReleased {
+                        value = it.x / width * max
+                        isValueChanging = false
+                    }
+                    valueChangingProperty().onChange {
+                        if (it) {
+                            controller.pauseSong()
+                        } else {
+                            controller.current = value.toInt()
+                            controller.startSong()
+                        }
+                    }
 
                     style = """
                         -fx-control-inner-background: transparent;

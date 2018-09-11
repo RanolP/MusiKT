@@ -57,8 +57,10 @@ class SoundCloudSource(url: String) : Source<SoundCloudData> {
         val files = Source.search(path) {
             it.startsWith(track.id.toString()) && !it.endsWith(".object")
         }
-        if (files.size == 1) {
-            return listOf(Source.Result(true, Source.Type.AUDIO, files[0]))
+        if (files.size == 2) {
+            val wav = files.first { it.toString().endsWith("wav") }
+            val original = files.first { !it.toString().endsWith("wav") }
+            return listOf(Source.Result(true, Source.Type.AUDIO, original), Source.Result(true, Source.Type.WAV, wav))
         } else if (files.isNotEmpty()) {
             println(files)
         }
@@ -78,7 +80,7 @@ class SoundCloudSource(url: String) : Source<SoundCloudData> {
                 baos.write(buffer, 0, bytes)
                 bytes = it.read(buffer)
                 current += bytes
-                progress?.notify(current, max, 100.0 * current / max)
+                progress?.notify(100.0 * current / max)
             }
 
             baos.toByteArray()
@@ -93,12 +95,14 @@ class SoundCloudSource(url: String) : Source<SoundCloudData> {
                 out.write(bytes, len - rem, n)
                 rem -= n
                 current += n
-                progress?.notify(current, max, 100.0 * current / max)
+                progress?.notify(100.0 * current / max)
             }
         }
 
-        progress?.complete(max)
+        val wav = makeWav(target.toFile())
 
-        return listOf(Source.Result(false, Source.Type.AUDIO, target))
+        progress?.complete()
+
+        return listOf(Source.Result(false, Source.Type.AUDIO, target), wav)
     }
 }

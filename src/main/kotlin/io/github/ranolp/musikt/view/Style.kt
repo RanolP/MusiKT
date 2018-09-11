@@ -2,7 +2,6 @@ package io.github.ranolp.musikt.view
 
 import javafx.scene.layout.BorderStrokeStyle
 import javafx.scene.paint.Color
-import javafx.scene.paint.Paint
 import tornadofx.*
 
 
@@ -19,8 +18,6 @@ class Style : Stylesheet() {
         val papertic = Color.hsb(230.0, 0.05, 0.95)
         val greeny = Color.hsb(130.0, 0.45, 0.85)
         val seliblue = Color.hsb(220.0, 0.45, 0.85)
-
-        val iconColor by cssproperty<Paint>("-fx-icon-color")
     }
 
 

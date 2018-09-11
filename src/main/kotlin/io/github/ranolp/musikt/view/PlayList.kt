@@ -5,6 +5,7 @@ import io.github.ranolp.musikt.model.Song
 import io.github.ranolp.musikt.source.soundcloud.SoundCloudSourceGenerator
 import io.github.ranolp.musikt.source.youtube.YoutubeSourceGenerator
 import io.github.ranolp.musikt.util.SystemResourceLookup
+import io.github.ranolp.musikt.util.javafx.circularProgressBar
 import io.github.ranolp.musikt.util.javafx.customDialogView
 import io.github.ranolp.musikt.util.javafx.icon
 import io.github.ranolp.musikt.util.javafx.margin
@@ -14,9 +15,11 @@ import javafx.geometry.Pos
 import javafx.scene.control.OverrunStyle
 import javafx.scene.layout.Priority
 import javafx.scene.layout.Region
+import javafx.scene.paint.Color
 import javafx.scene.text.FontWeight
 import org.kordamp.ikonli.feather.Feather
 import org.kordamp.ikonli.ionicons4.Ionicons4IOS
+import org.kordamp.ikonli.ionicons4.Ionicons4Material
 import tornadofx.*
 
 class PlayList : View() {
@@ -32,6 +35,39 @@ class PlayList : View() {
                     hbox(spacing = 8.0) {
                         alignment = Pos.CENTER_LEFT
                         minHeight = 64.0
+                        circularProgressBar {
+                            size(16)
+                            strokeWidth = 2.0
+                            strokeColor = Color.WHITE
+                            hide()
+                            song.loadingProgressProperty.onChange {
+                                progress = it / 100.0
+                            }
+                            song.isLoadingProperty.onChange {
+                                if (it) {
+                                    progress = 0.0
+                                    show()
+                                } else {
+                                    hide()
+                                }
+                            }
+                        }
+                        label {
+                            icon(Ionicons4Material.ARROW_DROPRIGHT, 16, Color.WHITE)
+                            size(16)
+                            isVisible = false
+
+                            song.isPlayingProperty.onChange {
+                                isVisible = it && !song.isLoading
+                            }
+                            song.isLoadingProperty.onChange {
+                                if (it) {
+                                    hide()
+                                } else {
+                                    show()
+                                }
+                            }
+                        }
                         vbox {
                             alignment = Pos.CENTER_LEFT
                             label(song.title) {
@@ -52,7 +88,7 @@ class PlayList : View() {
                             }
 
                             val parent = parent as? Region ?: return@vbox
-                            prefWidthProperty().bind(parent.widthProperty().subtract(64 * 3).subtract(4))
+                            prefWidthProperty().bind(parent.widthProperty().subtract(64 * 3).subtract(4).subtract(16))
                             parent.widthProperty().onChange {
                                 Platform.runLater {
                                     parent.requestLayout()
@@ -106,6 +142,7 @@ class PlayList : View() {
             items = mutableListOf(
                 Song(SystemResourceLookup.gson("mockup/youtube/0.json"), YoutubeSourceGenerator),
                 Song(SystemResourceLookup.gson("mockup/youtube/1.json"), YoutubeSourceGenerator),
+                Song(SystemResourceLookup.gson("mockup/youtube/2.json"), YoutubeSourceGenerator),
                 Song(SystemResourceLookup.gson("mockup/soundcloud/0.json"), SoundCloudSourceGenerator)
             ).observable()
         }
