@@ -47,7 +47,6 @@ class MusicPlayerController : Controller() {
                 Platform.runLater {
                     currentSong.isLoading = true
                 }
-                var lastPercentage = 0
                 currentSong.cache = currentSong.source.get { percentage ->
                     Platform.runLater {
                         currentSong.loadingProgressProperty.set(percentage.toInt())
@@ -73,7 +72,7 @@ class MusicPlayerController : Controller() {
             Platform.runLater {
                 max = round(clip.frameLength / frameRate).toInt()
             }
-            timer(daemon = true, period = 1000) {
+            timer(period = 1000) {
                 if(!clip.isOpen) {
                     cancel()
                     return@timer

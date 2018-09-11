@@ -23,6 +23,7 @@ data class Song<T : SourceData>(val data: JsonObject, val generator: SourceGener
     var isLoading by isLoadingProperty
 
     var cache: List<Source.Result>? = null
+        internal set
 
     val loadingProgressProperty = SimpleIntegerProperty()
 

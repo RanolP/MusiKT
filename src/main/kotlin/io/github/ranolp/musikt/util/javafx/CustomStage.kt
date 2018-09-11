@@ -19,7 +19,7 @@ class CustomStage(val shadow: Int = 16, val fitScene: Boolean = true) : Stage(St
     val real = BorderPane()
     private val realScene = Scene(shadowPane)
 
-    private val shadow_ = shadow.toDouble()
+    private val _shadow = shadow.toDouble()
     lateinit var insets: Insets
         private set
 
@@ -64,17 +64,17 @@ class CustomStage(val shadow: Int = 16, val fitScene: Boolean = true) : Stage(St
     private fun updateShadow() {
         if (isFocused) {
             shadowPane.effect = DropShadow(
-                shadow_ * 1.5, shadow_ * 0.25, shadow_ * 0.25, Color.gray(0.0, 0.65)
+                _shadow * 1.5, _shadow * 0.25, _shadow * 0.25, Color.gray(0.0, 0.65)
             )
             insets = Insets(
-                shadow_, shadow_ * 1.75, shadow_ * 1.75, shadow_
+                _shadow, _shadow * 1.75, _shadow * 1.75, _shadow
             )
         } else {
             shadowPane.effect = DropShadow(
-                shadow_, shadow_ * 0.15, shadow_ * 0.15, Color.gray(0.0, 0.65)
+                _shadow, _shadow * 0.15, _shadow * 0.15, Color.gray(0.0, 0.65)
             )
             insets = Insets(
-                shadow_ * 1.15, shadow_, shadow_, shadow_ * 1.15
+                _shadow * 1.15, _shadow, _shadow, _shadow * 1.15
             )
         }
     }

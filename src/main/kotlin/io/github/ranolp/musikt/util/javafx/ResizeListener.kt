@@ -22,14 +22,14 @@ class ResizeListener(private val stage: Stage,
         listeners[stage] = this
     }
 
-    enum class Horizontal {
+    private enum class Horizontal {
         LEFT,
         UNKNOWN,
         RIGHT,
         OUT
     }
 
-    enum class Vertical {
+    private enum class Vertical {
         TOP,
         UNKNOWN,
         BOTTOM,

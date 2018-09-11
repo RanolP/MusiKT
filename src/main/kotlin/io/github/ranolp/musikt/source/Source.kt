@@ -11,16 +11,11 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.function.BiPredicate
-import java.util.regex.Pattern
 import kotlin.streams.toList
 
 
 interface Source<Data : SourceData> {
     companion object {
-        private val SUCCESS_PATTERN = Pattern.compile(
-            "^\\s*video\\:\\S+\\s+audio\\:\\S+\\s+subtitle\\:\\S+\\s+global headers\\:\\S+.*$", Pattern.CASE_INSENSITIVE
-        )
-
         inline fun search(path: Path, crossinline namePredicate: (String) -> Boolean): List<Path> {
             return Files.find(path, 1, BiPredicate { p, _ ->
                 namePredicate(p.fileName.toString())
