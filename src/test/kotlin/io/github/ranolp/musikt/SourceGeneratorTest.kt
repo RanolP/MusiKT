@@ -20,10 +20,10 @@ class SourceGeneratorTest {
             var lastPercentage = 0
             val download = source.get { percentage ->
                 if (percentage == 100.0) {
-                    println("${data.title} Donwload Complete!")
+                    println("${data.title} Download Complete!")
                 } else if (percentage.toInt() % 5 != lastPercentage % 5) {
                     lastPercentage = percentage.toInt()
-                    println("${data.title} $lastPercentage% downloaded")
+                    println("${data.title} $lastPercentage% Downloaded")
                 }
             }
             println(download)
