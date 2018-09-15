@@ -1,8 +1,6 @@
 package io.github.ranolp.musikt.source
 
 import io.github.ranolp.musikt.util.Progress
-import io.github.ranolp.musikt.util.convertTo
-import io.github.ranolp.musikt.util.parseJson
 import ws.schild.jave.AudioAttributes
 import ws.schild.jave.Encoder
 import ws.schild.jave.EncodingAttributes
@@ -20,10 +18,6 @@ interface Source<Data : SourceData> {
             return Files.find(path, 1, BiPredicate { p, _ ->
                 namePredicate(p.fileName.toString())
             }).toList()
-        }
-
-        inline fun <reified T> read(path: Path): T {
-            return Files.newBufferedReader(path).parseJson().convertTo()
         }
     }
 

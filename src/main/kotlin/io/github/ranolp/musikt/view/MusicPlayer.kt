@@ -13,6 +13,7 @@ import javafx.scene.text.FontWeight
 import org.kordamp.ikonli.feather.Feather
 import org.kordamp.ikonli.ionicons4.Ionicons4IOS
 import tornadofx.*
+import kotlin.math.roundToInt
 
 
 class MusicPlayer : View() {
@@ -150,7 +151,7 @@ class MusicPlayer : View() {
                         currentProperty.set(label)
                     }
                     controller.currentProperty.onChange {
-                        valueProperty().set(it.toDouble())
+                        valueProperty().set((it / controller.frameRate).toDouble())
                     }
 
                     maxProperty().onChange {
@@ -181,7 +182,7 @@ class MusicPlayer : View() {
                         if (it) {
                             controller.pauseSong()
                         } else {
-                            controller.current = value.toInt()
+                            controller.current = (value.toInt() * controller.frameRate).roundToInt()
                             controller.startSong()
                         }
                     }

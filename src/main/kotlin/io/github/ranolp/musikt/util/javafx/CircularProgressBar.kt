@@ -15,6 +15,7 @@ import kotlin.concurrent.timer
 class CircularProgressBar : Region() {
     private val fillerArc = Arc().also {
         it.startAngle = 90.0
+        it.fill = Color.TRANSPARENT
     }
     private val transition = sequentialTransition {
         timeline {
@@ -54,7 +55,7 @@ class CircularProgressBar : Region() {
             fillerArc.length = when {
                 it >= 1 -> -360.0
                 it >= 0 -> minOf(it, 1.0) * -360
-                else -> 0.0
+                else -> 2.0
             }
         }
 

@@ -44,14 +44,15 @@ inline fun <reified T : Dialog> UIComponent.customDialogView(owner: Window? = nu
         title: String? = null,
         width: Number = 200,
         height: Number = 100,
+        reset: Boolean = true,
         crossinline init: T.(Stage) -> Unit
 ): CustomStage = customDialog(owner, title, width, height) {
-    val dialog = find(T::class, scope)
+    val dialog = T::class.java.newInstance()
+    (dialog as? UIComponent)?.init()
     dialog.stage = it
     it.apply(dialog.root)
     dialog.init(it)
 }
-
 
 abstract class Dialog(title: String? = null, icon: Node? = null) : View(title, icon) {
     lateinit var stage: CustomStage

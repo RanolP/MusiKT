@@ -12,7 +12,7 @@ internal val YOUTUBE_SHORT = Regex("(?:https?:)?(?://)?youtu\\.be/(?<url>\\w+)")
 internal val YOUTUBE_LONG = Regex("(?:https?:)?(?://)?(?:www\\.)?youtube\\.com/watch\\?(?:.+&)*v=(?<url>\\w+)(?:&.+)*")
 internal val YOUTUBE_ID = Regex("^([A-Za-z0-9_\\-]{11})$")
 
-internal val SOUNDCLOUD = Regex("(?:https?:)?(?://)?soundcloud\\.com/(?<user>\\w+)/(?<name>[\\w-]+)/?")
+internal val SOUNDCLOUD = Regex("(?:https?:)?(?://)?soundcloud\\.com/(?<user>[\\w-]+)/(?<name>[\\w-]+)/?")
 
 
 // API keys

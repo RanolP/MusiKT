@@ -12,7 +12,9 @@ object SystemResourceLookup {
     fun url(resource: String): URL = ClassLoader.getSystemResource(resource)
     fun stream(resource: String): InputStream = ClassLoader.getSystemResourceAsStream(resource)
     fun image(resource: String): Image = Image(stream(resource))
-    fun imageview(resource: String, lazyload: Boolean = false): ImageView = ImageView(Image(url(resource).toExternalForm(), lazyload))
+    fun imageview(resource: String,
+            lazyload: Boolean = false
+    ): ImageView = ImageView(Image(url(resource).toExternalForm(), lazyload))
 
     fun json(resource: String) = stream(resource).toJSON()
 

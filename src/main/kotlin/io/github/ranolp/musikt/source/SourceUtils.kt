@@ -21,6 +21,6 @@ val String.extractYoutubeId: String?
     }?.replace(this, "$1")?.takeIf { it.isNotEmpty() }
 
 val String.guessYoutubeId: String?
-    get() = if(YOUTUBE_ID.matches(this)) this else extractYoutubeId
+    get() = if (YOUTUBE_ID.matches(this)) this else extractYoutubeId
 
 fun makeYoutubeInput(id: String): JsonObject = jsonObject("id" to id)

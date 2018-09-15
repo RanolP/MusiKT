@@ -1,15 +1,17 @@
 package io.github.ranolp.musikt.view
 
 import io.github.ranolp.musikt.event.SongChangeEvent
+import io.github.ranolp.musikt.model.Playlist
 import io.github.ranolp.musikt.model.Song
-import io.github.ranolp.musikt.source.soundcloud.SoundCloudSourceGenerator
-import io.github.ranolp.musikt.source.youtube.YoutubeSourceGenerator
-import io.github.ranolp.musikt.util.SystemResourceLookup
+import io.github.ranolp.musikt.util.convertTo
 import io.github.ranolp.musikt.util.javafx.circularProgressBar
 import io.github.ranolp.musikt.util.javafx.customDialogView
 import io.github.ranolp.musikt.util.javafx.icon
 import io.github.ranolp.musikt.util.javafx.margin
 import io.github.ranolp.musikt.util.javafx.size
+import io.github.ranolp.musikt.util.parseJson
+import io.github.ranolp.musikt.util.saveInto
+import io.github.ranolp.musikt.util.serializeJson
 import javafx.application.Platform
 import javafx.geometry.Pos
 import javafx.scene.control.OverrunStyle
@@ -21,17 +23,27 @@ import org.kordamp.ikonli.feather.Feather
 import org.kordamp.ikonli.ionicons4.Ionicons4IOS
 import org.kordamp.ikonli.ionicons4.Ionicons4Material
 import tornadofx.*
+import java.nio.file.Paths
 
 class PlayList : View() {
+    val playlistPath = Paths.get("playlist/index.json")
+    val playlist = playlistPath.parseJson()?.convertTo<Playlist>() ?: Playlist()
+
     override val root = vbox {
         addClass(Style.realRoot)
-        val songs = listview<Song<*>> {
+        listview<Song<*>> {
+            setOnMouseMoved {
+                scene.onMouseMoved.handle(it)
+            }
             vboxConstraints {
                 vgrow = Priority.ALWAYS
             }
+            onMouseMovedProperty().onChange {
+                println(it)
+            }
             fixedCellSize = 64.0
             cellFormat { song ->
-                graphic = cache {
+                graphic = cache(song) {
                     hbox(spacing = 8.0) {
                         alignment = Pos.CENTER_LEFT
                         minHeight = 64.0
@@ -139,12 +151,7 @@ class PlayList : View() {
                 }
             }
 
-            items = mutableListOf(
-                Song(SystemResourceLookup.gson("mockup/youtube/0.json"), YoutubeSourceGenerator),
-                Song(SystemResourceLookup.gson("mockup/youtube/1.json"), YoutubeSourceGenerator),
-                Song(SystemResourceLookup.gson("mockup/youtube/2.json"), YoutubeSourceGenerator),
-                Song(SystemResourceLookup.gson("mockup/soundcloud/0.json"), SoundCloudSourceGenerator)
-            ).observable()
+            items = playlist.songsObservable
         }
         hbox(spacing = 8.0) {
             prefHeight = 64.0
@@ -158,10 +165,14 @@ class PlayList : View() {
 
                 action {
                     customDialogView<AddSongDialog>(currentStage, "Add song", width = 400, height = 200) {
-                        this.songs = songs
+                        this.playlist = this@PlayList.playlist
                     }
                 }
             }
+        }
+
+        playlist.songsObservable.onChange {
+            playlist.serializeJson().saveInto(playlistPath)
         }
     }
 }

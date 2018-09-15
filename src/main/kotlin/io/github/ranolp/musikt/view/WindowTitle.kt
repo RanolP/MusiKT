@@ -10,6 +10,7 @@ import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import javafx.scene.text.FontWeight
 import tornadofx.*
+import kotlin.system.exitProcess
 
 class WindowTitle(private val stage: CustomStage,
         closeButton: (ButtonConfiguration.() -> Unit)? = null,
@@ -22,6 +23,7 @@ class WindowTitle(private val stage: CustomStage,
             Thread.sleep(10)
         }
         stage.close()
+        exitProcess(0)
     }.also {
         closeButton?.invoke(it)
     }

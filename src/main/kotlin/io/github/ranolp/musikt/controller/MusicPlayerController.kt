@@ -5,6 +5,7 @@ import io.github.ranolp.musikt.model.Song
 import io.github.ranolp.musikt.source.Source
 import javafx.application.Platform
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleFloatProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import tornadofx.*
@@ -34,12 +35,17 @@ class MusicPlayerController : Controller() {
     val currentProperty = SimpleIntegerProperty()
     var current by currentProperty
 
+    val frameRateProperty = SimpleFloatProperty()
+    var frameRate by frameRateProperty
+
+
     val maxProperty = SimpleIntegerProperty()
     var max by maxProperty
 
     fun startSong(): Boolean {
         val currentSong = currentSong ?: return false
         CompletableFuture.runAsync {
+            closeClip()
             clip = AudioSystem.getClip()
             if (currentSong.cache == null) {
                 currentSong.isLoading = true
@@ -65,20 +71,20 @@ class MusicPlayerController : Controller() {
             }
 
             if (current > 0) {
-                clip.framePosition = (current * clip.format.frameRate).toInt()
+                clip.framePosition = current
             }
             clip.start()
-            val frameRate = clip.format.frameRate
+            frameRate = clip.format.frameRate
             Platform.runLater {
                 max = round(clip.frameLength / frameRate).toInt()
             }
             timer(period = 1000) {
-                if(!clip.isOpen) {
+                if (!clip.isOpen) {
                     cancel()
                     return@timer
                 }
                 Platform.runLater {
-                    current = round(clip.framePosition / frameRate).toInt()
+                    current = clip.framePosition
                 }
             }
             while (clip.isRunning) {
@@ -92,11 +98,15 @@ class MusicPlayerController : Controller() {
     }
 
     fun pauseSong() {
+        closeClip()
+        isPlaying = false
+        currentSong?.isPlaying = false
+    }
+
+    private fun closeClip() {
         if (::clip.isInitialized && clip.isOpen) {
             clip.close()
         }
-        isPlaying = false
-        currentSong?.isPlaying = false
     }
 
     fun enableShuffleMode() {
@@ -132,6 +142,7 @@ class MusicPlayerController : Controller() {
             } else {
                 pauseSong()
                 current = 0
+                frameRate = -1.0f
                 max = 0
             }
 
